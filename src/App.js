@@ -1,9 +1,8 @@
+import Login from "./components/Login"
 
 const App = () => {
   return (
-    <div>
-      Alkemy react challenge
-    </div>
+    <Login />
   );
 }
 
