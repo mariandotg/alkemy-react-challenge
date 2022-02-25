@@ -1,6 +1,6 @@
-import { Routes, Route, Link } from "react-router-dom";
-import Login from "./components/Login";
+import { Routes, Route } from "react-router-dom";
 import PrivateRoute from "./components/PrivateRoute";
+import Login from "./pages/Login";
 
 const App = () => {
   const user = false;
@@ -10,9 +10,9 @@ const App = () => {
         <Route element={<PrivateRoute user={user} />}>
           <Route path="/" element={<div>home</div>} />
           <Route path="dashboard" element={<div>dashboard</div>} />
+          <Route path="*" element={<div>error 404</div>}/>
         </Route>
         <Route path="login" element={<Login />} />
-        <Route path="*" element={<div>error 404</div>}/>
       </Routes>
     </>
   );
