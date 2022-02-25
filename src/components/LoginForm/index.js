@@ -1,5 +1,8 @@
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
+import { useContext } from "react";
+import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../../App";
 
 const validate = (values) => {
   const errors = {};
@@ -17,6 +20,9 @@ const validate = (values) => {
 };
 
 const LoginForm = () => {
+  const { setUser, setAuthentication } = useContext(AuthContext);
+  const navigate = useNavigate();
+
   return (
     <>
       <Formik
@@ -35,19 +41,25 @@ const LoginForm = () => {
             })
             .then((res) => {
               console.log(res.data);
+              setAuthentication(true);
+              setUser({
+                email: values.email,
+                password: values.password,
+              });
+              navigate("/");
             })
             .catch((error) => {
               console.log(error);
-            })
+            });
         }}
       >
-        {({isValid, dirty, isSubmitting}) => (
+        {({ dirty, isSubmitting }) => (
           <Form>
             <Field type="text" name="email" placeholder="johndoe@gmail.com" />
             <ErrorMessage name="email" component="div" />
             <Field type="password" name="password" placeholder="password" />
             <ErrorMessage name="password" component="div" />
-            <button type="submit" disabled={((!dirty) || (isSubmitting))}>
+            <button type="submit" disabled={!dirty || isSubmitting}>
               Ingresar
             </button>
           </Form>
