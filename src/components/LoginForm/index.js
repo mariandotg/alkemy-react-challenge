@@ -1,8 +1,10 @@
 import axios from "axios";
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../App";
+import swal from "sweetalert";
+import { postAuthCredentials } from "../../services/auth";
 
 const validate = (values) => {
   const errors = {};
@@ -20,9 +22,28 @@ const validate = (values) => {
 };
 
 const LoginForm = () => {
+  const [error, setError] = useState({});
   const { setUser, setAuthentication } = useContext(AuthContext);
   const navigate = useNavigate();
 
+  async function onSubmit(values) {
+    const response = Promise(postAuthCredentials(values))
+      .then((res) => {
+        const token = response.token;
+        localStorage.setItem("alkemy_token", token);
+        setAuthentication(true);
+        setUser({
+          email: values.email,
+          password: values.password,
+        });
+        navigate("/");
+      })
+      .catch((error) => {
+        new Error(error);
+        setError(error);
+      });
+    return response;
+  }
   return (
     <>
       <Formik
@@ -33,14 +54,11 @@ const LoginForm = () => {
         validate={validate}
         validateOnChange={false}
         validateOnBlur={false}
-        onSubmit={async (values) => {
-          await axios
-            .post(process.env.REACT_APP_AUTH_URL, {
-              email: values.email,
-              password: values.password,
-            })
+        onSubmit={(values) => {
+          const response = postAuthCredentials(values)
             .then((res) => {
-              console.log(res.data);
+              const token = response.token;
+              localStorage.setItem("alkemy_token", token);
               setAuthentication(true);
               setUser({
                 email: values.email,
@@ -49,11 +67,13 @@ const LoginForm = () => {
               navigate("/");
             })
             .catch((error) => {
-              console.log(error);
+              new Error(error);
+              setError(error);
             });
+          return response;
         }}
       >
-        {({ dirty, isSubmitting }) => (
+        {({ errors, dirty, isSubmitting }) => (
           <Form>
             <Field type="text" name="email" placeholder="johndoe@gmail.com" />
             <ErrorMessage name="email" component="div" />
@@ -62,6 +82,7 @@ const LoginForm = () => {
             <button type="submit" disabled={!dirty || isSubmitting}>
               Ingresar
             </button>
+            {error && <p>{error.data}</p>}
           </Form>
         )}
       </Formik>

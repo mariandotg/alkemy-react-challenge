@@ -1,12 +1,42 @@
-import { useContext } from "react";
+import { useContext, useState, useEffect } from "react";
+import axios from "axios";
 import { AuthContext } from "../App";
+import { getMenu } from "../services/menu";
+import MenuItem from "../components/MenuItem"
 
 const Home = () => {
-    const { user } = useContext(AuthContext);
+  const [menu, setMenu] = useState([]);
 
-    return (
-    <div>Home {user === true ? <p>CONTEXTO ACTIVO</p> : <p>xd</p>}</div>
-  )
-}
+  const { isAuthenticated } = useContext(AuthContext);
 
-export default Home
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        if(menu.length !== 0) return console.log("do not fetch")
+        const response = await axios.get(
+          `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&number=4&diet=vegan&addRecipeInformation=true&addRecipeNutrition=true`
+        );
+        console.log(response.data.results);
+        setMenu([...response.data.results])
+      } catch (error) {
+        console.log(error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  console.log(menu);
+  return (
+    <>
+      <div>
+        Home {isAuthenticated === true ? <p>CONTEXTO ACTIVO</p> : <p>CONTEXTO DESACTIVADO</p>}
+      </div>
+      {menu.map((res) => {
+        return <MenuItem key={res.id} menuItem={res} />
+      })}
+    </>
+  );
+};
+
+export default Home;
