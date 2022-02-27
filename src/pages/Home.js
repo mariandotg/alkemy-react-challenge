@@ -1,8 +1,5 @@
-import { useContext, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import axios from "axios";
-import { AuthContext } from "../App";
-import { getMenu } from "../services/menu";
-import MenuItem from "../components/MenuItem"
 import Menu from "../components/Menu";
 
 const Home = () => {
