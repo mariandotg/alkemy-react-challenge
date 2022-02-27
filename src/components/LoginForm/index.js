@@ -23,27 +23,9 @@ const validate = (values) => {
 
 const LoginForm = () => {
   const [error, setError] = useState({});
-  const { setUser, setAuthentication } = useContext(AuthContext);
+  const { setUser } = useContext(AuthContext);
   const navigate = useNavigate();
 
-  async function onSubmit(values) {
-    const response = Promise(postAuthCredentials(values))
-      .then((res) => {
-        const token = response.token;
-        localStorage.setItem("alkemy_token", token);
-        setAuthentication(true);
-        setUser({
-          email: values.email,
-          password: values.password,
-        });
-        navigate("/");
-      })
-      .catch((error) => {
-        new Error(error);
-        setError(error);
-      });
-    return response;
-  }
   return (
     <>
       <Formik
@@ -57,9 +39,8 @@ const LoginForm = () => {
         onSubmit={(values) => {
           const response = postAuthCredentials(values)
             .then((res) => {
-              const token = response.token;
+              const token = res.token;
               localStorage.setItem("alkemy_token", token);
-              setAuthentication(true);
               setUser({
                 email: values.email,
                 password: values.password,

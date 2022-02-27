@@ -8,25 +8,23 @@ import Login from "./pages/Login";
 export const AuthContext = createContext({});
 
 const App = () => {
-  const [isAuthenticated, setAuthentication] = useState(false);
   const [user, setUser] = useState({});
   const global = {
     user,
     setUser,
-    isAuthenticated,
-    setAuthentication,
-  }
+  };
+
   return (
     <>
-    <AuthContext.Provider value={global}>
-      <Routes>
-        <Route element={<PrivateRoute isAuthenticated={isAuthenticated} />}>
-          <Route path="/" element={<Home />} />
-          <Route path="*" element={<Error404 />}/>
-        </Route>
-        <Route path="login" element={<Login />} />
-      </Routes>
-    </AuthContext.Provider>
+      <AuthContext.Provider value={global}>
+        <Routes>
+          <Route element={<PrivateRoute />}>
+            <Route path="/" element={<Home />} />
+            <Route path="*" element={<Error404 />} />
+          </Route>
+          <Route path="login" element={<Login />} />
+        </Routes>
+      </AuthContext.Provider>
     </>
   );
 };

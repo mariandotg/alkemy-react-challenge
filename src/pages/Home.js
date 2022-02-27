@@ -8,8 +8,6 @@ import Menu from "../components/Menu";
 const Home = () => {
   const [menu, setMenu] = useState([]);
 
-  const { isAuthenticated } = useContext(AuthContext);
-
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -28,9 +26,6 @@ const Home = () => {
 
   return (
     <>
-      <div>
-        Home {isAuthenticated === true ? <p>CONTEXTO ACTIVO</p> : <p>CONTEXTO DESACTIVADO</p>}
-      </div>
       <Menu menu={menu}/>
     </>
   );

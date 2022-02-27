@@ -1,7 +1,7 @@
 import { Outlet, Navigate } from "react-router-dom";
 
-const PrivateRoute = ({ isAuthenticated, redirectPath = "login" }) => {
-  if (!isAuthenticated) {
+const PrivateRoute = ({ redirectPath = "login" }) => {
+  if (!localStorage.getItem("alkemy_token")) {
     return <Navigate to={redirectPath} replace />;
   }
   return <Outlet />;
