@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import MenuItem from "../MenuItem";
 
-const Menu = ({ menu }) => {
+const Menu = ({ menu, setMenu }) => {
   const [healthScoreAvg, setHealthScoreAvg] = useState(0);
   const [timeAvg, setTimeAvg] = useState(0);
   const [menuPrice, setMenuPrice] = useState(0);
@@ -26,12 +26,17 @@ const Menu = ({ menu }) => {
     );
   }, [menu]);
 
+  function handleRemove(e, menuItem) {
+    e.stopPropagation();
+    setMenu((prevMenu) => prevMenu.filter((item) => item.id !== menuItem.id))
+  }
+
   return (
     <>
       {menu.length > 0 ? (
         <>
           {menu.map((res) => {
-            return <MenuItem key={res.id} menuItem={res} />;
+            return <MenuItem key={res.id} menuItem={res} handleRemove={handleRemove} />;
           })}
           <p>Average Health Score: {healthScoreAvg}</p>
           <p>Average Time (minutes): {timeAvg}</p>

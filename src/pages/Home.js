@@ -18,12 +18,12 @@ const Home = () => {
       }
     };
 
-    fetchData();
+    return fetchData();
   }, []);
 
   return (
     <>
-      <Menu menu={menu}/>
+      <Menu menu={menu} setMenu={setMenu}/>
     </>
   );
 };
