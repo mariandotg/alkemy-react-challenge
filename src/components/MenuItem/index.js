@@ -1,4 +1,5 @@
 import { useState } from "react";
+import Button from "react-bootstrap/Button"
 
 const MenuItem = ({ menuItem, handleRemove }) => {
   const [detailIsOpened, setDetailIsOpened] = useState(false);
@@ -19,7 +20,7 @@ const MenuItem = ({ menuItem, handleRemove }) => {
             <p>Price: {menuItem.pricePerServing}</p>
           </>
         )}
-        <button onClick={(e) => handleRemove(e, menuItem)}>Delete</button>
+        <Button onClick={(e) => handleRemove(e, menuItem)}>Delete</Button>
       </div>
     </>
   );

@@ -1,4 +1,5 @@
 import { useState, useEffect } from "react";
+import Spinner from "react-bootstrap/Spinner";
 import MenuItem from "../MenuItem";
 
 const Menu = ({ menu, setMenu }) => {
@@ -28,7 +29,7 @@ const Menu = ({ menu, setMenu }) => {
 
   function handleRemove(e, menuItem) {
     e.stopPropagation();
-    setMenu((prevMenu) => prevMenu.filter((item) => item.id !== menuItem.id))
+    setMenu((prevMenu) => prevMenu.filter((item) => item.id !== menuItem.id));
   }
 
   return (
@@ -36,13 +37,21 @@ const Menu = ({ menu, setMenu }) => {
       {menu.length > 0 ? (
         <>
           {menu.map((res) => {
-            return <MenuItem key={res.id} menuItem={res} handleRemove={handleRemove} />;
+            return (
+              <MenuItem
+                key={res.id}
+                menuItem={res}
+                handleRemove={handleRemove}
+              />
+            );
           })}
           <p>Average Health Score: {healthScoreAvg}</p>
           <p>Average Time (minutes): {timeAvg}</p>
           <p>Menu price: {menuPrice}</p>
         </>
-      ) : <p>loading...</p>}
+      ) : (
+        <Spinner animation="border" variant="primary" />
+      )}
     </>
   );
 };

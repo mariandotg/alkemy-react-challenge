@@ -1,29 +1,57 @@
 import { useState, useEffect } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
 import axios from "axios";
 import Menu from "../components/Menu";
+import { getSearchByQuery } from "../services/search";
+import { getMenu } from "../services/menu";
+
+const validate = (values) => {
+  const errors = {};
+  if (!/[a-zA-Z]+\s+[a-zA-Z]+/g.test(values.searchQuery)) {
+    errors.searchQuery = "please insert more words";
+  }
+  return errors;
+};
 
 const Home = () => {
   const [menu, setMenu] = useState([]);
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        if(menu.length !== 0) return console.log("do not fetch")
-        const response = await axios.get(
-          `https://api.spoonacular.com/recipes/complexSearch?apiKey=${process.env.REACT_APP_API_KEY}&number=4&diet=vegan&addRecipeInformation=true&addRecipeNutrition=true`
-        );
-        setMenu([...response.data.results])
-      } catch (error) {
-        console.log(error);
-      }
-    };
-
-    return fetchData();
+    const response = getMenu()
+      .then((res) => setMenu([...res.results]))
+      .catch((error) => console.log(error));
+    return response;
   }, []);
 
   return (
     <>
-      <Menu menu={menu} setMenu={setMenu}/>
+      <Formik
+        initialValues={{
+          searchQuery: "",
+        }}
+        validate={validate}
+        onSubmit={(values) => {
+          const query = values.searchQuery.replaceAll(" ", "+");
+          console.log(query);
+          const response = getSearchByQuery(query)
+            .then((res) => console.log(res))
+            .catch((error) => console.log(error));
+          return response;
+        }}
+      >
+        {() => (
+          <Form>
+            <Field
+              type="text"
+              name="searchQuery"
+              placeholder="Search recipes"
+            />
+            <ErrorMessage name="searchQuery" component="div" />
+            <button type="submit">X</button>
+          </Form>
+        )}
+      </Formik>
+      <Menu menu={menu} setMenu={setMenu} />
     </>
   );
 };
