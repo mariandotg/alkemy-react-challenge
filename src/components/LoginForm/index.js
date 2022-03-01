@@ -1,7 +1,11 @@
-import { Formik, Form, Field, ErrorMessage } from "formik";
-import { useContext, useState } from "react";
+import { Formik, ErrorMessage } from "formik";
+import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { AuthContext } from "../../App";
+import { Context } from "../../App";
+import Container from "react-bootstrap/Container";
+import Form from "react-bootstrap/Form";
+import Button from "react-bootstrap/Button";
+
 import swal from "sweetalert";
 import { postAuthCredentials } from "../../services/auth";
 
@@ -21,51 +25,79 @@ const validate = (values) => {
 };
 
 const LoginForm = () => {
-  const [error, setError] = useState({});
-  const { setUser } = useContext(AuthContext);
+  const { setUser } = useContext(Context);
   const navigate = useNavigate();
 
   return (
     <>
-      <Formik
-        initialValues={{
-          email: "",
-          password: "",
-        }}
-        validate={validate}
-        validateOnChange={false}
-        validateOnBlur={false}
-        onSubmit={(values) => {
-          const response = postAuthCredentials(values)
-            .then((res) => {
-              const token = res.token;
-              localStorage.setItem("alkemy_token", token);
-              setUser({
-                email: values.email,
-                password: values.password,
+      <Container fluid="md">
+        <h1 className="my-3">Login</h1>
+        <Formik
+          initialValues={{
+            email: "",
+            password: "",
+          }}
+          validate={validate}
+          validateOnChange={false}
+          validateOnBlur={false}
+          onSubmit={(values) => {
+            const response = postAuthCredentials(values)
+              .then((res) => {
+                const token = res.token;
+                localStorage.setItem("alkemy_token", token);
+                setUser({
+                  email: values.email,
+                  password: values.password,
+                });
+                navigate("/");
+              })
+              .catch((error) => {
+                swal({
+                  title: "Error",
+                  text: "Credenciales inválidas",
+                  icon: "warning",
+                  button: "Ok",
+                })
               });
-              navigate("/");
-            })
-            .catch((error) => {
-              new Error(error);
-              setError(error);
-            });
-          return response;
-        }}
-      >
-        {({ errors, dirty, isSubmitting }) => (
-          <Form>
-            <Field type="text" name="email" placeholder="johndoe@gmail.com" />
-            <ErrorMessage name="email" component="div" />
-            <Field type="password" name="password" placeholder="password" />
-            <ErrorMessage name="password" component="div" />
-            <button type="submit" disabled={!dirty || isSubmitting}>
-              Ingresar
-            </button>
-            {error && <p>{error.data}</p>}
-          </Form>
-        )}
-      </Formik>
+            return response;
+          }}
+        >
+          {(formik) => (
+            <Form onSubmit={formik.handleSubmit}>
+              <Form.Group className="mb-3">
+                <Form.Label>Email address</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="email"
+                  value={formik.values.email}
+                  onChange={formik.handleChange}
+                  placeholder="johndoe@gmail.com"
+                />
+                <ErrorMessage name="email" component="div" />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Password</Form.Label>
+                <Form.Control
+                  type="password"
+                  name="password"
+                  value={formik.values.password}
+                  onChange={formik.handleChange}
+                  placeholder="password"
+                />
+                <ErrorMessage name="password" component="div" />
+              </Form.Group>
+
+              <Button
+                type="submit"
+                disabled={!formik.dirty || formik.isSubmitting}
+              >
+                Ingresar
+              </Button>
+              
+            </Form>
+          )}
+        </Formik>
+      </Container>
     </>
   );
 };
